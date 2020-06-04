@@ -1,0 +1,26 @@
+{
+  "name": "phore/jwt",
+  "description": "Phore JWT library",
+  "license": "MIT",
+  "homepage": "https://infracamp.org/project/phore",
+  "authors": [
+    { "name": "Matthias Leuffen", "email": "m@tth.es" },
+    { "name": "Michael Schaar"}
+  ],
+  "repositories": [
+  ],
+  "require": {
+    "php": ">=7.2"
+  },
+  "suggest": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Phore\\JWT\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  }
+}
