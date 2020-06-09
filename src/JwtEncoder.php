@@ -7,7 +7,7 @@ namespace Phore\JWT;
 class JwtEncoder
 {
 
-    public function encode(JwtToken $jwt) : string
+    public function encode(JWT $jwt) : string
     {
         // return jwt
 

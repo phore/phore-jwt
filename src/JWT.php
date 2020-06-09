@@ -2,7 +2,7 @@
 
 namespace Phore\JWT;
 
-class JwtToken
+class JWT
 {
 
     public $header;
@@ -13,9 +13,13 @@ class JwtToken
      * @param mixed[] $header
      * @param mixed[] $payload
      */
-    public function __construct(array $header = ['alg' => "HS256", 'typ' => "JWT"], array $payload = [])
+    public function __construct(array $payload = [], array $header = [])
     {
         $this->header = $header;
+
+        // Should be ignored by libraries - TEST!
+        $this->header["typ"] = "JWT";
+
         $this->payload = $payload;
     }
 
