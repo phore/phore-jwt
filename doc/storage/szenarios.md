@@ -15,9 +15,8 @@ FE client.
 
 ### Read write
 
-Read Requires: user.storage || user.storage.read || user.storage.:topic || user.storage.:topic.read
-
-Write Requires: user.storage || user.storage.:topic
+- Read Requires: `user.storage || user.storage.read || user.storage.:topic || user.storage.:topic.read`
+- Write Requires: `user.storage || user.storage.:topic`
 
 ```
 https://storageapi/v1/doc/user/:topic
@@ -28,7 +27,7 @@ Szenario: FE offers a form to display and adjust settings for a Reporting
 Service. The Reporting services needs a list of all users with this topic
 assigned and the settings there.
 
-Requires: users.list & users.topic.:topic.read
+Requires: users.list & users.storage.:topic.list
 
 ***Request:***
 ```
