@@ -8,8 +8,20 @@ use InvalidArgumentException;
 
 class JwtEncoder
 {
+    /**
+     * Signing or encryption algorithm as specified in https://tools.ietf.org/html/rfc7518#section-3
+     * @var string
+     */
     private $alg;
+    /**
+     * Callback function that performs the signing operation and returns the unencoded signature
+     * @var callable
+     */
     private $signatureCallback;
+    /**
+     * The secret used to perform the signing operation
+     * @var string
+     */
     private $secret;
 
     /**
