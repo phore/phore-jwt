@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 /**
  * - API
  * - Project Setup for T4S-STORE
@@ -10,16 +9,17 @@ namespace App;
  * - Talk about OHT Time adjust
  * - Deployment Status of Kubernetes
  *
+ * https://tools.ietf.org/html/rfc7519#section-7.1 - CREATE JWT
+ *
  */
 
-
 use Phore\JWT\JwtEncoder;
-use Phore\JWT\JWT;
+use Phore\JWT\Jwt;
 
 
 /* CREATE a Token */
 
-$token = new JWT([
+$token = new Jwt([
     "sub" => "alskdj",
     "..." => "..."
 ]);
