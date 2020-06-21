@@ -23,20 +23,25 @@ class JwtDecoder
     }
 
 
-    public function decode(string $tokenData)
+    public function decode(string $tokenString)
     {
-
-        $unverifiedToken = $this->_decodeStrToken($tokenData);
-
-
-        if ($this->publicKeyLoader !== null) {
-            $this->addPublicKey(($this->publicKeyLoader)($unverifiedToken));
-        }
+        $jwtParts = explode(".", $tokenString);
+        if(count($jwtParts) < 3)
+            throw new \UnexpectedValueException("Token '" . substr($tokenString, 0, 9) . "...' is not a valid JWT.");
+        $this->validateSignature($tokenString);
 
 
-        $verifiedToken = $this->_verifyConstraints($unverifiedToken);
+//        $unverifiedToken = $this->_decodeStrToken($tokenData);
 
-        return $verifiedToken;
+//
+//        if ($this->publicKeyLoader !== null) {
+//            $this->addPublicKey(($this->publicKeyLoader)($unverifiedToken));
+//        }
+//
+//
+//        $verifiedToken = $this->_verifyConstraints($unverifiedToken);
+//
+//        return $verifiedToken;
 
     }
 
