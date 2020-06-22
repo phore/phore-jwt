@@ -94,7 +94,10 @@ class JwtDecoder
 
     private function base64urlDecode(string $string)
     {
-        return base64_decode(str_replace(['-', '_', ''], ['+', '/', '='], $string));
+        $decodedString = base64_decode(str_replace(['-', '_', ''], ['+', '/', '='], $string), true);
+        if($decodedString === false)
+            throw new \UnexpectedValueException("String contains invalid base64 characters.");
+        return $decodedString;
     }
 
     private function validateSignature(string $alg, string $secret, string $tokenString)
