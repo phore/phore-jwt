@@ -16,7 +16,7 @@ class Jwt
     public function __construct(array $payload = [])
     {
         // A valid JWT will always have the alg parameter
-        $this->header["alg"] = "None";
+        $this->header["alg"] = "none";
         // Should be ignored by libraries - TEST!
         $this->header["typ"] = "JWT";
 
@@ -42,4 +42,24 @@ class Jwt
     {
         return json_encode($this->payload);
     }
+
+    public function getClaim($key, $default = null)
+    {
+        return $this->payload[$key] ?? $default;
+    }
+
+    public function getHeader($key, $default = null)
+    {
+        return $this->header[$key] ?? $default;
+    }
+
+//    public function get(string $name, $default = null)
+//    {
+//        return $this->data[$name] ?? $default;
+//    }
+//
+//    public function has(string $name): bool
+//    {
+//        return array_key_exists($name, $this->data);
+//    }
 }

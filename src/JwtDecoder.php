@@ -10,6 +10,13 @@ use Phore\Core\Exception\InvalidDataException;
 class JwtDecoder
 {
 
+    /**
+     * @var bool Set to true to allow decoding unsecured jws
+     */
+    private $allowUnsecuredJws = false;
+
+    private $singleSecret;
+    private $singleAlg;
 
     /**
      * @var callable|null
@@ -22,13 +29,41 @@ class JwtDecoder
         $this->publicKeyLoader = $cb;
     }
 
-
-    public function decode(string $tokenString)
+    public function setAllowUnsecuredJws(bool $allow)
     {
+        $this->allowUnsecuredJws = $allow;
+    }
+
+    public function setSingleSecret(string $alg, string $secret)
+    {
+        if(!JsonWebAlgorithms::isValid($alg))
+            throw new \InvalidArgumentException("Algorithm '$alg' must be a valid JWA");
+        $this->singleAlg = $alg;
+        $this->singleSecret = $secret;
+    }
+
+    public function decode(string $tokenString) : Jwt
+    {
+        // has a secret and algorithm been defined? If not, don't allow encoding
+        if(!isset($this->singleAlg) && !isset($this->singleSecret))
+            throw new \InvalidArgumentException("Cannot decode token: No key available.");
         $jwtParts = explode(".", $tokenString);
+        // does it look like a jwt??
         if(count($jwtParts) < 3)
             throw new \UnexpectedValueException("Token '" . substr($tokenString, 0, 9) . "...' is not a valid JWT.");
-        $this->validateSignature($tokenString);
+        if(empty($jwtParts[2])) {
+            //this is an unsecured JWS
+            if(!$this->allowUnsecuredJws)
+                throw new \Exception("Unsecured JWS is not allowed.");
+            return $this->decodeJws($tokenString);
+        }
+        if(count($jwtParts) == 3) {
+            //this looks like JWS, lets try to decode the header and do some more validation
+            if(!$this->validateSignature($this->singleAlg, $this->singleSecret, $tokenString))
+                throw new \UnexpectedValueException("Invalid Signature.");
+            return $this->decodeJws($tokenString);
+
+        }
 
 
 //        $unverifiedToken = $this->_decodeStrToken($tokenData);
@@ -45,38 +80,53 @@ class JwtDecoder
 
     }
 
-    private function validateSignature(string $tokenString)
+    private function decodeJws(string $tokenString) : Jwt
     {
-        $tokenComponents = explode(".", $tokenString);
-        if(count($tokenComponents) !== 3) {
-            throw new \InvalidArgumentException("Malformed or unsupported Jwt");
+        $jwtParts = explode(".", $tokenString);
+        $header = json_decode($this->base64urlDecode($jwtParts[0]), true);
+        $payload = json_decode($this->base64urlDecode($jwtParts[1]), true);
+        $jwt = new Jwt($payload);
+        foreach ($header as $key => $val) {
+            $jwt->setHeader($key, $val);
         }
-        $header = phore_json_decode(base64_decode($tokenComponents[0]));
-        $data = $tokenComponents[0].".".$tokenComponents[1];
-        $signature = base64_decode(str_replace(['-', '_', ''], ['+', '/', '='], $tokenComponents[2]));
+        return $jwt;
+    }
 
-        $headerAlg = phore_pluck('alg', $header, new \InvalidArgumentException("Invalid token header: alg missing."));
+    private function base64urlDecode(string $string)
+    {
+        return base64_decode(str_replace(['-', '_', ''], ['+', '/', '='], $string));
+    }
 
-        switch ($headerAlg) {
-            case "HS256":
-                $hash = hash_hmac("sha256", $data, $this->clientSecret, true);
-                if(hash_equals($signature, hash_hmac("sha256", $data, $this->clientSecret, true))) {
+    private function validateSignature(string $alg, string $secret, string $tokenString)
+    {
+        $jwtParts = explode(".", $tokenString);
+        $header = json_decode($this->base64urlDecode($jwtParts[0]), true);
+        $alg = $header['alg'] ?? "not specified";
+        if($alg !== $this->singleAlg)
+            throw new \UnexpectedValueException("Algorithm '$alg' is not supported.");
+        $signature = $this->base64urlDecode($jwtParts[2]);
+        $data = $jwtParts[0] . "." . $jwtParts[1];
+        switch ($alg) {
+            case JsonWebAlgorithms::HS256:
+                if(hash_equals($signature, hash_hmac("sha256", $data, $this->singleSecret, true))) {
                     return true;
                 }
                 return false;
-            case "HS512":
-                if(hash_equals($signature, hash_hmac("sha512", $data, $this->clientSecret, true))) {
+            case JsonWebAlgorithms::HS512:
+                if(hash_equals($signature, hash_hmac("sha512", $data, $this->singleSecret, true))) {
                     return true;
                 }
                 return false;
-            case "RS256":
-                $rsaSignatureAlg = OPENSSL_ALGO_SHA256;
+            case JsonWebAlgorithms::RS256:
+                $verify = openssl_verify($data, $signature, $this->singleSecret, OPENSSL_ALGO_SHA256);
+                return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
                 break;
-            case "RS512":
-                $rsaSignatureAlg = OPENSSL_ALGO_SHA512;
+            case JsonWebAlgorithms::RS512:
+                $verify = openssl_verify($data, $signature, $this->singleSecret, OPENSSL_ALGO_SHA512);
+                return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
                 break;
             default:
-                throw new \InvalidArgumentException("Unsupported signing method: $headerAlg");
+                throw new \InvalidArgumentException("Unsupported JWA: '$alg'");
         }
 
         $jwks = phore_http_request($this->config['jwks_uri'])->send()->getBodyJson();
