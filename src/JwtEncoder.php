@@ -5,6 +5,7 @@ namespace Phore\JWT;
 
 
 use InvalidArgumentException;
+use Phore\JWT\JWK\Jwk;
 
 class JwtEncoder
 {
@@ -24,15 +25,34 @@ class JwtEncoder
      */
     private $secret;
 
+    private $jwkSet;
+
+    public function __construct(?Jwks $jwkSet)
+    {
+        if(empty($jwkSet))
+            $this->jwkSet = new Jwks();
+    }
+
+    public function setJwks(Jwks $jwkSet)
+    {
+        $this->jwkSet = $jwkSet;
+    }
+
+    public function addJwk(Jwk $jwk)
+    {
+        $this->jwkSet->addJwk($jwk);
+    }
+
     /**
      * Signs and encodes the JWT object into the JWS / JWE Compact Serialization. Requires a signing algorithm and
-     * secret set through JwtEncoder->setSecret($alg, $secret).
+     * secret set through JwtEncoder->setSecret($alg, $secret) or through the provided jwks referenced by the kid
      * If an algorithm was specified in the JWT's 'alg' header, it will be overwritten by the alg provided here.
      *
      * @param Jwt $jwt
+     * @param string $kid References a key in the jwks
      * @return string JWS / JWE Compact Serialization string
      */
-    public function encode(Jwt $jwt) : string
+    public function encode(Jwt $jwt, string $kid = "") : string
     {
         if($this->alg === null)
             throw new InvalidArgumentException("JWT-encoding requires a secret and algorithm to be set.");

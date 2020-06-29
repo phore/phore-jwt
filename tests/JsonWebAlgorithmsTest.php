@@ -1,15 +1,15 @@
 <?php
 
 
-use Phore\JWT\JsonWebAlgorithms;
+use Phore\JWT\Jwa;
 use PHPUnit\Framework\TestCase;
 
 class JsonWebAlgorithmsTest extends TestCase
 {
     public function testIsValidJWA()
     {
-        $this->assertFalse(JsonWebAlgorithms::isValid('undefined'));
-        $this->assertTrue(JsonWebAlgorithms::isValid(JsonWebAlgorithms::RS256));
+        $this->assertFalse(Jwa::isValid('undefined'));
+        $this->assertTrue(Jwa::isValid(Jwa::RS256));
     }
 
 }

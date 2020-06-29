@@ -36,7 +36,7 @@ class JwtDecoder
 
     public function setSingleSecret(string $alg, string $secret)
     {
-        if(!JsonWebAlgorithms::isValid($alg))
+        if(!Jwa::isValid($alg))
             throw new \InvalidArgumentException("Algorithm '$alg' must be a valid JWA");
         $this->singleAlg = $alg;
         $this->singleSecret = $secret;
@@ -110,21 +110,21 @@ class JwtDecoder
         $signature = $this->base64urlDecode($jwtParts[2]);
         $data = $jwtParts[0] . "." . $jwtParts[1];
         switch ($alg) {
-            case JsonWebAlgorithms::HS256:
+            case Jwa::HS256:
                 if(hash_equals($signature, hash_hmac("sha256", $data, $this->singleSecret, true))) {
                     return true;
                 }
                 return false;
-            case JsonWebAlgorithms::HS512:
+            case Jwa::HS512:
                 if(hash_equals($signature, hash_hmac("sha512", $data, $this->singleSecret, true))) {
                     return true;
                 }
                 return false;
-            case JsonWebAlgorithms::RS256:
+            case Jwa::RS256:
                 $verify = openssl_verify($data, $signature, $this->singleSecret, OPENSSL_ALGO_SHA256);
                 return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
                 break;
-            case JsonWebAlgorithms::RS512:
+            case Jwa::RS512:
                 $verify = openssl_verify($data, $signature, $this->singleSecret, OPENSSL_ALGO_SHA512);
                 return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
                 break;

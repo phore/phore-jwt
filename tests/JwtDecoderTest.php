@@ -2,7 +2,7 @@
 
 
 use Phore\ASN\KeyFactory;
-use Phore\JWT\JsonWebAlgorithms;
+use Phore\JWT\Jwa;
 use Phore\JWT\JwtDecoder;
 use PHPUnit\Framework\TestCase;
 
@@ -71,22 +71,22 @@ class JwtDecoderTest extends TestCase
     {
         $token = trim(file_get_contents(__DIR__ . "/mockData/hs256-JWS.jwt"));
         $decoder = new JwtDecoder();
-        $decoder->setSingleSecret(JsonWebAlgorithms::HS256, 'abc123');
+        $decoder->setSingleSecret(Jwa::HS256, 'abc123');
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));
-        $this->assertEquals(JsonWebAlgorithms::HS256, $jwt->getHeader('alg'));
+        $this->assertEquals(Jwa::HS256, $jwt->getHeader('alg'));
     }
 
     public function testDecodeJwsHS512()
     {
         $token = trim(file_get_contents(__DIR__ . "/mockData/hs512-JWS.jwt"));
         $decoder = new JwtDecoder();
-        $decoder->setSingleSecret(JsonWebAlgorithms::HS512, 'abc123');
+        $decoder->setSingleSecret(Jwa::HS512, 'abc123');
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));
-        $this->assertEquals(JsonWebAlgorithms::HS512, $jwt->getHeader('alg'));
+        $this->assertEquals(Jwa::HS512, $jwt->getHeader('alg'));
     }
 
     public function testDecodeJwsRS256()
@@ -94,11 +94,11 @@ class JwtDecoderTest extends TestCase
         $token = trim(file_get_contents(__DIR__ . "/mockData/rs256-JWS.jwt"));
         $decoder = new JwtDecoder();
         $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa4096.pem")));
-        $decoder->setSingleSecret(JsonWebAlgorithms::RS256, $secret->exportPem());
+        $decoder->setSingleSecret(Jwa::RS256, $secret->exportPem());
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));
-        $this->assertEquals(JsonWebAlgorithms::RS256, $jwt->getHeader('alg'));
+        $this->assertEquals(Jwa::RS256, $jwt->getHeader('alg'));
     }
 
     public function testDecodeJwsRS512()
@@ -106,11 +106,11 @@ class JwtDecoderTest extends TestCase
         $token = trim(file_get_contents(__DIR__ . "/mockData/rs512-JWS.jwt"));
         $decoder = new JwtDecoder();
         $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa4096.pem")));
-        $decoder->setSingleSecret(JsonWebAlgorithms::RS512, $secret->exportPem());
+        $decoder->setSingleSecret(Jwa::RS512, $secret->exportPem());
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));
-        $this->assertEquals(JsonWebAlgorithms::RS512, $jwt->getHeader('alg'));
+        $this->assertEquals(Jwa::RS512, $jwt->getHeader('alg'));
     }
 
 

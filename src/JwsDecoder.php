@@ -36,10 +36,16 @@ class JwsDecoder
         $this->header = $this->base64urlDecode($jwsComponents[1]);
         $this->payload = $this->base64urlDecode($jwsComponents[2]);
         $header = json_decode($this->header);
-        $payload = json_decode($this->payload);
-        if(!($header instanceof stdClass) || (!$payload instanceof stdClass))
+        if(!($header instanceof stdClass))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
         $this->validateHeader($header);
+        if($this->nested === true)
+            throw new InvalidJwtFormatException("Nested JWTs are currently not supported");
+        $this->validateSignature();
+
+//        $payload = json_decode($this->payload);
+//        if(!($payload instanceof stdClass))
+//            throw new InvalidJwtFormatException("JWS contains invalid Json.");
 
 
 
@@ -59,7 +65,7 @@ class JwsDecoder
 
     private function validateAlg($alg)
     {
-        return JsonWebAlgorithms::isValid($alg);
+        return Jwa::isValid($alg);
     }
 
     private function validateHeader(stdClass $header)

@@ -6,7 +6,7 @@ namespace Phore\JWT;
 
 use ReflectionClass;
 
-class JsonWebAlgorithms
+class Jwa
 {
     /**
      * Parameter Values for JWS as specified in:
@@ -50,7 +50,7 @@ class JsonWebAlgorithms
 
     public static function isValid(string $alg)
     {
-        $refl = new ReflectionClass('Phore\JWT\JsonWebAlgorithms');
+        $refl = new ReflectionClass('Phore\JWT\Jwa');
         return in_array($alg, $refl->getconstants());
     }
 
