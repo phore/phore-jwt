@@ -11,8 +11,8 @@ class RsaPublicKeyTest extends TestCase
         $key = new RsaPublicKey('mod', 'exp');
         $jwkArray = $key->getArray();
         $this->assertEquals('RSA', $jwkArray['kty']);
-        $this->assertEquals('mod', $jwkArray['n']);
-        $this->assertEquals('exp', $jwkArray['e']);
+        $this->assertEquals(base64_encode('mod'), $jwkArray['n']);
+        $this->assertEquals(base64_encode('exp'), $jwkArray['e']);
     }
 
 }

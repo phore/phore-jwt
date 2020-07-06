@@ -51,15 +51,21 @@ class RsaPrivateKey extends Jwk
     public function getArray(): array
     {
         $jwk = $this->getBasicArray();
-        $jwk['n'] = $this->modulus;
-        $jwk['e'] = $this->exponent;
-        $jwk['d'] = $this->privateExponent;
-        $jwk['p'] = $this->firstPrimeFactor;
-        $jwk['q'] = $this->secondPrimeFactor;
-        $jwk['dp'] = $this->firstFactorCrtExponent;
-        $jwk['dq'] = $this->secondFactorCrtExponent;
-        $jwk['qi'] = $this->firstCrtCoefficient;
+        $jwk['n'] = base64_encode($this->modulus);
+        $jwk['e'] = base64_encode($this->exponent);
+        $jwk['d'] = base64_encode($this->privateExponent);
+        $jwk['p'] = base64_encode($this->firstPrimeFactor);
+        $jwk['q'] = base64_encode($this->secondPrimeFactor);
+        $jwk['dp'] = base64_encode($this->firstFactorCrtExponent);
+        $jwk['dq'] = base64_encode($this->secondFactorCrtExponent);
+        $jwk['qi'] = base64_encode($this->firstCrtCoefficient);
 
         return $jwk;
+    }
+
+    public function getPem(): string
+    {
+        return "";
+
     }
 }

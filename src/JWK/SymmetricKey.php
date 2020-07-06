@@ -26,4 +26,10 @@ class SymmetricKey extends Jwk
 
         return $jwk;
     }
+
+    public function getPem(): string
+    {
+        // TODO: Implement getPem() method.
+        return "";
+    }
 }

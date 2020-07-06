@@ -6,6 +6,7 @@ namespace Phore\JWT;
 
 use InvalidArgumentException;
 use Phore\JWT\JWK\Jwk;
+use Phore\JWT\JWK\Jwks;
 
 class JwtEncoder
 {
@@ -27,10 +28,17 @@ class JwtEncoder
 
     private $jwkSet;
 
+    /**
+     * JwtEncoder constructor.
+     * @param Jwks|null $jwkSet
+     */
     public function __construct(?Jwks $jwkSet)
     {
-        if(empty($jwkSet))
+        if(empty($jwkSet)) {
             $this->jwkSet = new Jwks();
+        } else {
+            $this->jwkSet = $jwkSet;
+        }
     }
 
     public function setJwks(Jwks $jwkSet)
@@ -45,7 +53,7 @@ class JwtEncoder
 
     /**
      * Signs and encodes the JWT object into the JWS / JWE Compact Serialization. Requires a signing algorithm and
-     * secret set through JwtEncoder->setSecret($alg, $secret) or through the provided jwks referenced by the kid
+     * secret set through JwtEncoder->setSecret($alg, $secret) or through the provided jwks referenced by the kid.
      * If an algorithm was specified in the JWT's 'alg' header, it will be overwritten by the alg provided here.
      *
      * @param Jwt $jwt
@@ -54,9 +62,24 @@ class JwtEncoder
      */
     public function encode(Jwt $jwt, string $kid = "") : string
     {
-        if($this->alg === null)
-            throw new InvalidArgumentException("JWT-encoding requires a secret and algorithm to be set.");
+        $key = $this->secret;
+        if(!empty($kid)){
+            $key = $this->jwkSet->getKey($kid);
+            $this->secret = $key->getPem();
+            $this->alg = $key->getAlgorithm();
+        }
         $jwt->setHeader('alg', $this->alg);
+        switch ($this->alg) {
+            case Jwa::RS256:
+                $this->signatureCallback = function ($b64HeaderPayload) {
+                    if(!openssl_sign($b64HeaderPayload, $signature, $this->secret, OPENSSL_ALGO_SHA256))
+                        throw new InvalidArgumentException("Secret must be a valid PEM-formatted RSA Private Key");
+                    return $signature;
+                };
+                break;
+            default:
+                throw new InvalidArgumentException("JWT-encoding requires a secret and algorithm to be set.");
+        }
         $b64Header = $this->base64urlEncode($jwt->serializeHeader());
         $b64Payload = $this->base64urlEncode($jwt->serializePayload());
         return $this->sign($b64Header . "." . $b64Payload);

@@ -25,9 +25,15 @@ class RsaPublicKey extends Jwk
     public function getArray(): array
     {
         $jwk = $this->getBasicArray();
-        $jwk['n'] = $this->modulus;
-        $jwk['e'] = $this->exponent;
+        $jwk['n'] = base64_encode($this->modulus);
+        $jwk['e'] = base64_encode($this->exponent);
 
         return $jwk;
+    }
+
+    public function getPem(): string
+    {
+        // TODO: Implement getPem() method.
+        return "";
     }
 }

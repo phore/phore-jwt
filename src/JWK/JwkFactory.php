@@ -4,24 +4,77 @@
 namespace Phore\JWT\JWK;
 
 
+use InvalidArgumentException;
+
 class JwkFactory
 {
     public function loadJwkString(string $json) : Jwk
     {
         //TODO: create a jwk from a jwk json string
-        throw new \InvalidArgumentException("Invalid or unsupported JWK format.");
+        throw new InvalidArgumentException("Invalid or unsupported JWK format.");
     }
 
-    public function loadPem(string $pem) : Jwk
+    public static function loadPem(string $pemKeyString) : Jwk
     {
-        //TODO: create jwk from pem encoded pkcs
-        throw new \InvalidArgumentException("Invalid or unsupported PEM format.");
+        if(!preg_match("/-{5}BEGIN (?:(RSA|EC) )?(PUBLIC|PRIVATE) KEY-{5}/", $pemKeyString, $matches)) {
+            throw new InvalidArgumentException("Invalid or unsupported PEM key format.");
+        }
+        if($matches[2] == "PRIVATE") {
+            $key = openssl_pkey_get_private($pemKeyString);
+            if($key === false)
+                throw new InvalidArgumentException("Invalid or unsupported PEM key format.");
+            $keyDetails = openssl_pkey_get_details($key);
+            switch ($keyDetails['type']) {
+                case OPENSSL_KEYTYPE_RSA:
+                    return new RsaPrivateKey(
+                        $keyDetails["rsa"]["n"],
+                        $keyDetails["rsa"]["e"],
+                        $keyDetails["rsa"]["d"],
+                        $keyDetails["rsa"]["p"],
+                        $keyDetails["rsa"]["q"],
+                        $keyDetails["rsa"]["dmp1"],
+                        $keyDetails["rsa"]["dmq1"],
+                        $keyDetails["rsa"]["iqmp"]
+                    );
+                case OPENSSL_KEYTYPE_DSA:
+                case OPENSSL_KEYTYPE_DH:
+                case OPENSSL_KEYTYPE_EC:
+                    throw new InvalidArgumentException("Key Type currently not supported");
+                default:
+                    throw new InvalidArgumentException("Unknown Key Type");
+            }
+        } else {
+            $key = openssl_pkey_get_public($pemKeyString);
+            if($key === false)
+                throw new InvalidArgumentException("Invalid or unsupported PEM key format.");
+            $keyDetails = openssl_pkey_get_details($key);
+            switch ($keyDetails['type']) {
+                case OPENSSL_KEYTYPE_RSA:
+                    return new RsaPublicKey($keyDetails["rsa"]["n"], $keyDetails["rsa"]["e"]);
+                case OPENSSL_KEYTYPE_DSA:
+                case OPENSSL_KEYTYPE_DH:
+                case OPENSSL_KEYTYPE_EC:
+                    throw new InvalidArgumentException("Key Type currently not supported");
+                default:
+                    throw new InvalidArgumentException("Unknown Key Type");
+            }
+        }
+    }
+
+    public function loadJwk(string $jwkString)
+    {
+//        $success = true;
+//        $keyParams = json_decode($jwkString);
+//        if(!key_exists('kty', $keyParams))
+//            throw new InvalidArgumentException("Invalid or unsupported JSON Web Key format.");
+//        $keyParams['kty'];
+
     }
 
     public function createJwk(string $alg) : Jwk
     {
         //TODO: create a new jwk with supplied algorithm
-        throw new \InvalidArgumentException("Invalid or unsupported algorithm.");
+        throw new InvalidArgumentException("Invalid or unsupported algorithm.");
     }
 
 }

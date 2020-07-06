@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Phore\JWT\JWK;
 
@@ -24,8 +25,9 @@ abstract class Jwk
     /**
      * @return string json-encoded
      */
-    public function __toString() {
-        return json_encode($this->getArray());
+    public function __toString(): string {
+        $array = $this->getArray();
+        return json_encode($array, JSON_PRESERVE_ZERO_FRACTION|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -52,5 +54,31 @@ abstract class Jwk
      * @return string
      */
     public abstract function getPem() : string;
+
+    public function setKeyId(string $keyId)
+    {
+        $this->keyId = $keyId;
+    }
+
+    public function getKeyId()
+    {
+        return $this->keyId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAlgorithm()
+    {
+        return $this->algorithm;
+    }
+
+    /**
+     * @param mixed $algorithm
+     */
+    public function setAlgorithm($algorithm): void
+    {
+        $this->algorithm = $algorithm;
+    }
 
 }

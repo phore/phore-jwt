@@ -20,13 +20,13 @@ class RsaPrivateKeyTest extends TestCase
         );
         $jwkArray = $key->getArray();
         $this->assertEquals('RSA', $jwkArray['kty']);
-        $this->assertEquals('n', $jwkArray['n']);
-        $this->assertEquals('e', $jwkArray['e']);
-        $this->assertEquals('d', $jwkArray['d']);
-        $this->assertEquals('p', $jwkArray['p']);
-        $this->assertEquals('q', $jwkArray['q']);
-        $this->assertEquals('dp', $jwkArray['dp']);
-        $this->assertEquals('dq', $jwkArray['dq']);
-        $this->assertEquals('qi', $jwkArray['qi']);
+        $this->assertEquals(base64_encode('n'), $jwkArray['n']);
+        $this->assertEquals(base64_encode('e'), $jwkArray['e']);
+        $this->assertEquals(base64_encode('d'), $jwkArray['d']);
+        $this->assertEquals(base64_encode('p'), $jwkArray['p']);
+        $this->assertEquals(base64_encode('q'), $jwkArray['q']);
+        $this->assertEquals(base64_encode('dp'), $jwkArray['dp']);
+        $this->assertEquals(base64_encode('dq'), $jwkArray['dq']);
+        $this->assertEquals(base64_encode('qi'), $jwkArray['qi']);
     }
 }

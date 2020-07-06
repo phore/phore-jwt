@@ -1,0 +1,1 @@
+C:37:"PHPUnit\Runner\DefaultTestResultCache":253:{a:2:{s:7:"defects";a:2:{s:40:"JwkFactoryTest::testLoadPemPrivateRsaKey";i:3;s:36:"JwtEncoderTest::testEncodeJwsWithRsa";i:4;}s:5:"times";a:2:{s:40:"JwkFactoryTest::testLoadPemPrivateRsaKey";d:11.835;s:36:"JwtEncoderTest::testEncodeJwsWithRsa";d:0.004;}}}
