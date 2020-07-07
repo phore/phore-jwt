@@ -26,7 +26,7 @@ class JwkFactory
             $keyDetails = openssl_pkey_get_details($key);
             switch ($keyDetails['type']) {
                 case OPENSSL_KEYTYPE_RSA:
-                    return new RsaPrivateKey(
+                    $key = new RsaPrivateKey(
                         $keyDetails["rsa"]["n"],
                         $keyDetails["rsa"]["e"],
                         $keyDetails["rsa"]["d"],
@@ -36,6 +36,8 @@ class JwkFactory
                         $keyDetails["rsa"]["dmq1"],
                         $keyDetails["rsa"]["iqmp"]
                     );
+                    $key->setPemEncodedString($pemKeyString);
+                    return $key;
                 case OPENSSL_KEYTYPE_DSA:
                 case OPENSSL_KEYTYPE_DH:
                 case OPENSSL_KEYTYPE_EC:
@@ -50,7 +52,9 @@ class JwkFactory
             $keyDetails = openssl_pkey_get_details($key);
             switch ($keyDetails['type']) {
                 case OPENSSL_KEYTYPE_RSA:
-                    return new RsaPublicKey($keyDetails["rsa"]["n"], $keyDetails["rsa"]["e"]);
+                    $key = new RsaPublicKey($keyDetails["rsa"]["n"], $keyDetails["rsa"]["e"]);
+                    $key->setPemEncodedString($pemKeyString);
+                    return $key;
                 case OPENSSL_KEYTYPE_DSA:
                 case OPENSSL_KEYTYPE_DH:
                 case OPENSSL_KEYTYPE_EC:

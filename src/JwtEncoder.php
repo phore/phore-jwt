@@ -34,11 +34,7 @@ class JwtEncoder
      */
     public function __construct(?Jwks $jwkSet)
     {
-        if(empty($jwkSet)) {
-            $this->jwkSet = new Jwks();
-        } else {
-            $this->jwkSet = $jwkSet;
-        }
+        $this->jwkSet = $jwkSet ?? new Jwks();;
     }
 
     public function setJwks(Jwks $jwkSet)
@@ -60,15 +56,16 @@ class JwtEncoder
      * @param string $kid References a key in the jwks
      * @return string JWS / JWE Compact Serialization string
      */
-    public function encode(Jwt $jwt, string $kid = "") : string
+    public function encode(Jwt $jwt, string $kid) : string
     {
-        $key = $this->secret;
-        if(!empty($kid)){
-            $key = $this->jwkSet->getKey($kid);
-            $this->secret = $key->getPem();
-            $this->alg = $key->getAlgorithm();
+        $key = $this->jwkSet->getKey($kid);
+        if(empty($key)){
+            throw new InvalidArgumentException("Key '$kid' not found.");
         }
+        $this->secret = $key->getPem();
+        $this->alg = $key->getAlgorithm();
         $jwt->setHeader('alg', $this->alg);
+        $jwt->setHeader('kid', $kid);
         switch ($this->alg) {
             case Jwa::RS256:
                 $this->signatureCallback = function ($b64HeaderPayload) {
@@ -159,6 +156,11 @@ class JwtEncoder
     private function base64urlEncode(string $string)
     {
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($string));
+    }
+
+    private function validateKey(Jwk $jwk) {
+        if(empty($jwk->getAlgorithm()))
+            throw new InvalidArgumentException("Jwk must be assigned an algorithm.");
     }
 
 

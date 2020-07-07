@@ -11,19 +11,31 @@ class JwtEncoderTest extends TestCase
 {
     public function testEncodeJwsWithRsa()
     {
-        $keyString = trim(file_get_contents(__DIR__ . "/../mockData/secrets/private-key-rsa4096.pem"));
+        // Prepare JwtEncoder
+        $keyString = trim(file_get_contents(__DIR__ . "/../mockData/secrets/private-key-rsa2048.pem"));
         $jwk = JwkFactory::loadPem($keyString);
-        $jwk->setKeyId("abc");
         $jwk->setAlgorithm(Jwa::RS256);
-        $jwks = new Jwks($jwk);
-        $encoder = new JwtEncoder($jwks);
+        $jwkSet = new Jwks();
+        $kid = $jwkSet->addJwk($jwk);
+        $encoder = new JwtEncoder($jwkSet);
 
-        $jwt = new Phore\JWT\Jwt(['test' => 123]);
-        $token = $encoder->encode($jwt, 'abc');
-        print_r($token);
+        $claimsSet = [
+            'iss' => 'https://example.com',
+            'sub' => 'user',
+            'aud' => 'client',
+            'azp' => 'client',
+            'exp' => 253373920500,
+            'iat' => 1594154023,
+            'test' => 123
+        ];
+
+        // Generate and Encode JWT
+        $jwt = new Phore\JWT\Jwt($claimsSet);
+        $token = $encoder->encode($jwt, $kid);
+
+        // assert
         $expectedToken = trim(file_get_contents(__DIR__ . "/../mockData/rs256-JWS.jwt"));
         $this->assertEquals($expectedToken, $token);
-
     }
 
 }

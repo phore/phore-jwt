@@ -11,16 +11,16 @@ class Jwt
 
     /**
      * JwtToken constructor.
-     * @param mixed[] $payload
+     * @param mixed[] $claims Set of claims that will be added to the payload
      */
-    public function __construct(array $payload = [])
+    public function __construct(array $claims = [])
     {
         // A valid JWT will always have the alg parameter
         $this->header["alg"] = "none";
         // Should be ignored by libraries - TEST!
         $this->header["typ"] = "JWT";
 
-        $this->payload = $payload;
+        $this->payload = $claims;
     }
 
     public function setHeader($key, $value)

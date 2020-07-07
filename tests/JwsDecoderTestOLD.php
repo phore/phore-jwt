@@ -7,7 +7,7 @@ use Phore\JWT\Exceptions\InvalidJwtFormatException;
 use Phore\JWT\JwsDecoder;
 use PHPUnit\Framework\TestCase;
 
-class JwsDecoderTest extends TestCase
+class JwsDecoderTestOLD extends TestCase
 {
     public function testTokenContainsMoreThanThreeParts()
     {

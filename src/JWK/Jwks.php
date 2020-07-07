@@ -18,24 +18,28 @@ class Jwks
     {
         $this->keys = [];
         foreach ($jwk as $key) {
-            $this->keys[] = $key;
+            $this->addJwk($key);
         }
     }
 
-    public function addJwk(Jwk $jwk)
+    /**
+     * Add a Jwk to the key set. The KeyId will be the value set in the JWK or its thumbprint
+     * @param Jwk $jwk
+     * @return string KeyId
+     */
+    public function addJwk(Jwk $jwk) : string
     {
-        //TODO: When jwk has no kid create one (maybe using jkw signature?)
+        //If JWK has no keyId use the thumbprint
+        $kid = $jwk->getKeyId() ?? $jwk->getThumbprint();
+        $jwk->setKeyId($kid);
         //TODO: When jwk has a kid make sure it doesnt conflict with existing ones (same id is allowed for different types/algs?)
-        $this->keys[] = $jwk;
+        $this->keys[$kid] = $jwk;
+        return $kid;
     }
 
     public function getKey(string $kid) : ?Jwk
     {
-        foreach ($this->keys as $jwk) {
-            if($jwk->getKeyId() === $kid)
-                return $jwk;
-        }
-        return null;
+        return $this->keys[$kid] ?? null;
     }
 
 }

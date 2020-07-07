@@ -93,11 +93,11 @@ class JwtDecoderTest extends TestCase
     {
         $token = trim(file_get_contents(__DIR__ . "/mockData/rs256-JWS.jwt"));
         $decoder = new JwtDecoder();
-        $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa4096.pem")));
+        $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa2048.pem")));
         $decoder->setSingleSecret(Jwa::RS256, $secret->exportPem());
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
-        $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));
+        $this->assertEquals(123, $jwt->getClaim('test', 'does not exist'));
         $this->assertEquals(Jwa::RS256, $jwt->getHeader('alg'));
     }
 

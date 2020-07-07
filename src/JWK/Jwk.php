@@ -13,6 +13,8 @@ abstract class Jwk
     protected $algorithm; // alg
     protected $keyId; // kid
 
+    private $pemEncodedString; // pem encoded representation of the key
+
     /**
      * Jwk constructor.
      * @param string $keyType kty - one of EC, RSA, oct
@@ -33,9 +35,14 @@ abstract class Jwk
     /**
      * @return array json assoc array
      */
-    public abstract function getArray() : array;
+    public function getArray() : array
+    {
+        return $this->getKeyMetaArray() + $this->getKeyComponentArray();
+    }
 
-    protected function getBasicArray() : array
+    protected abstract function getKeyComponentArray() : array;
+
+    protected function getKeyMetaArray() : array
     {
         $jwk['kty'] = $this->keyType;
         if(isset($this->publicKeyUse))
@@ -54,6 +61,23 @@ abstract class Jwk
      * @return string
      */
     public abstract function getPem() : string;
+
+    /**
+     * Calculate the key thumbprint using SHA-256 as defined in rfc7638
+     * @return string
+     */
+    public function getThumbprint() : string
+    {
+        $thumbprint = $this->getThumbprintArray();
+        ksort($thumbprint);
+        return base64urlEncode(hash('sha256', jsonEncode($thumbprint), true));
+    }
+
+    /**
+     * Gather and lexicographically sort the required parts to calculate the thumbprint
+     * @return array
+     */
+    protected abstract function getThumbprintArray() : array ;
 
     public function setKeyId(string $keyId)
     {
@@ -79,6 +103,22 @@ abstract class Jwk
     public function setAlgorithm($algorithm): void
     {
         $this->algorithm = $algorithm;
+    }
+
+    /**
+     * @param mixed $pemEncodedString
+     */
+    public function setPemEncodedString($pemEncodedString): void
+    {
+        $this->pemEncodedString = $pemEncodedString;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getPemEncodedString()
+    {
+        return $this->pemEncodedString;
     }
 
 }

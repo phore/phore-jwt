@@ -22,18 +22,28 @@ class RsaPublicKey extends Jwk
         $this->exponent = $exponent;
     }
 
-    public function getArray(): array
+    public function getPem(): string
     {
-        $jwk = $this->getBasicArray();
-        $jwk['n'] = base64_encode($this->modulus);
-        $jwk['e'] = base64_encode($this->exponent);
+        return $this->getPemEncodedString() ?? $this->pemEncodeKey();
 
+    }
+
+    private function pemEncodeKey() : string
+    {
+        return "";
+    }
+
+    protected function getKeyComponentArray(): array
+    {
+        $jwk['n'] = base64urlEncode($this->modulus);
+        $jwk['e'] = base64urlEncode($this->exponent);
         return $jwk;
     }
 
-    public function getPem(): string
+    protected function getThumbprintArray(): array
     {
-        // TODO: Implement getPem() method.
-        return "";
+        $thumbprint = $this->getKeyComponentArray();
+        $thumbprint['kty'] = $this->keyType;
+        return $thumbprint;
     }
 }

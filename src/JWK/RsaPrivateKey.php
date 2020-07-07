@@ -3,7 +3,6 @@
 
 namespace Phore\JWT\JWK;
 
-
 class RsaPrivateKey extends Jwk
 {
     private $modulus;
@@ -48,24 +47,36 @@ class RsaPrivateKey extends Jwk
         $this->firstCrtCoefficient = $firstCrtCoefficient;
     }
 
-    public function getArray(): array
+    public function getPem(): string
     {
-        $jwk = $this->getBasicArray();
-        $jwk['n'] = base64_encode($this->modulus);
-        $jwk['e'] = base64_encode($this->exponent);
-        $jwk['d'] = base64_encode($this->privateExponent);
-        $jwk['p'] = base64_encode($this->firstPrimeFactor);
-        $jwk['q'] = base64_encode($this->secondPrimeFactor);
-        $jwk['dp'] = base64_encode($this->firstFactorCrtExponent);
-        $jwk['dq'] = base64_encode($this->secondFactorCrtExponent);
-        $jwk['qi'] = base64_encode($this->firstCrtCoefficient);
+        return $this->getPemEncodedString() ?? $this->pemEncodeKey();
+
+    }
+
+    private function pemEncodeKey() : string
+    {
+        return "";
+    }
+
+    protected function getKeyComponentArray(): array
+    {
+        $jwk['n'] = base64urlEncode($this->modulus);
+        $jwk['e'] = base64urlEncode($this->exponent);
+        $jwk['d'] = base64urlEncode($this->privateExponent);
+        $jwk['p'] = base64urlEncode($this->firstPrimeFactor);
+        $jwk['q'] = base64urlEncode($this->secondPrimeFactor);
+        $jwk['dp'] = base64urlEncode($this->firstFactorCrtExponent);
+        $jwk['dq'] = base64urlEncode($this->secondFactorCrtExponent);
+        $jwk['qi'] = base64urlEncode($this->firstCrtCoefficient);
 
         return $jwk;
     }
 
-    public function getPem(): string
+    protected function getThumbprintArray(): array
     {
-        return "";
-
+        $thumbprint['e'] = base64urlEncode($this->exponent);
+        $thumbprint['kty'] = $this->keyType;
+        $thumbprint['n'] = base64urlEncode($this->modulus);
+        return $thumbprint;
     }
 }

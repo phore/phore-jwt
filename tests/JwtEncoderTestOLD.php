@@ -5,7 +5,7 @@ use Phore\JWT\Jwt;
 use Phore\JWT\JwtEncoder;
 use PHPUnit\Framework\TestCase;
 
-class JwtEncoderTest extends TestCase
+class JwtEncoderTestOLD extends TestCase
 {
     public function testEncodeJwsAlgNone()
     {

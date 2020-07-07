@@ -21,7 +21,7 @@ class SymmetricKey extends Jwk
 
     public function getArray(): array
     {
-        $jwk = $this->getBasicArray();
+        $jwk = $this->getKeyMetaArray();
         $jwk['k'] = $this->keyValue;
 
         return $jwk;
@@ -31,5 +31,15 @@ class SymmetricKey extends Jwk
     {
         // TODO: Implement getPem() method.
         return "";
+    }
+
+    protected function getKeyComponentArray(): array
+    {
+        // TODO: Implement getKeyComponentArray() method.
+    }
+
+    protected function getThumbprintArray(): array
+    {
+        // TODO: Implement getThumbprintArray() method.
     }
 }
