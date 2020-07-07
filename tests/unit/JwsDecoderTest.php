@@ -1,5 +1,6 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\JWK\JwkFactory;
 use Phore\JWT\JWK\Jwks;

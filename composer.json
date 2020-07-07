@@ -28,6 +28,9 @@
       "src/functions.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": { "Phore\\Tests\\": "tests/" }
+  },
   "minimum-stability": "dev",
   "require-dev": {
     "phpunit/phpunit": "*",

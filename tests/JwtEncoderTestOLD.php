@@ -1,5 +1,6 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\Jwt;
 use Phore\JWT\JwtEncoder;

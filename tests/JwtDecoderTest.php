@@ -1,10 +1,14 @@
 <?php
 
+namespace Phore\Tests;
 
+use Exception;
+use InvalidArgumentException;
 use Phore\ASN\KeyFactory;
 use Phore\JWT\Jwa;
 use Phore\JWT\JwtDecoder;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 class JwtDecoderTest extends TestCase
 {

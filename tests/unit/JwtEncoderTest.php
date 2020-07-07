@@ -1,9 +1,11 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\Jwa;
 use Phore\JWT\JWK\JwkFactory;
 use Phore\JWT\JWK\Jwks;
+use Phore\JWT\Jwt;
 use Phore\JWT\JwtEncoder;
 use PHPUnit\Framework\TestCase;
 
@@ -30,7 +32,7 @@ class JwtEncoderTest extends TestCase
         ];
 
         // Generate and Encode JWT
-        $jwt = new Phore\JWT\Jwt($claimsSet);
+        $jwt = new Jwt($claimsSet);
         $token = $encoder->encode($jwt, $kid);
 
         // assert

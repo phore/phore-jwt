@@ -1,5 +1,6 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\Exceptions\InvalidAlgorithmException;
 use Phore\JWT\Exceptions\InvalidHeaderException;
