@@ -12,14 +12,14 @@ namespace Demo;
 /* Client Side */
 
 
-use Phore\JWT\JwtDecoder;
+use Phore\JWT\JwtDecoderOld;
 
 $jwks = new Jwks();
 $jwks->addPublicKeysFromUrl("https://xxxx");
 $jwks->addKeySet($keyset);
 
 
-$decoder = new JwtDecoder();
+$decoder = new JwtDecoderOld();
 $decoder->addJwks($jwks);
 
 $token = $decoder->decode($stringInput);
@@ -29,9 +29,9 @@ $token = $decoder->decode($stringInput);
 
 /* Load Key by token */
 
-$decoder = new JwtDecoder();
+$decoder = new JwtDecoderOld();
 
-$decoder->setOnBeforeDecode(function (JwtDecoder $decoder, JWT $unverifiedToken) {
+$decoder->setOnBeforeDecode(function (JwtDecoderOld $decoder, JWT $unverifiedToken) {
     $decoder->addPrivateKey(file_get_contents($unverifiedToken->data->iss));
 });
 
@@ -52,7 +52,7 @@ $decoder->verifyToken($unverifiedToken);
 
 /* Syncronous Key */
 
-$decoder = new JwtDecoder();
+$decoder = new JwtDecoderOld();
 $decoder->addSyncronousKey("issuer1", "secret1");
 
 
@@ -61,7 +61,7 @@ $decoder->addSyncronousKey("issuer1", "secret1");
 
 /* OpenId */
 
-$decoder = new JwtDecoder();
+$decoder = new JwtDecoderOld();
 
 $decoder->addJwks($jwks);
 

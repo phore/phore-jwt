@@ -7,7 +7,7 @@ namespace Phore\JWT;
 use Phore\App\Mod\OAuth\PublicKeyConverter;
 use Phore\Core\Exception\InvalidDataException;
 
-class JwtDecoder
+class JwtDecoderOld
 {
 
     /**

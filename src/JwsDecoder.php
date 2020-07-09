@@ -29,7 +29,7 @@ class JwsDecoder
      */
     private $clientId;
     /**
-     * @var array ClientIds that must present int the 'aud' claim (in addition to the clientIc specified above)
+     * @var array ClientIds that must present int the 'aud' claim (in addition to the clientId specified above)
      */
     private $audience;
     /**
@@ -64,6 +64,9 @@ class JwsDecoder
     public function __construct()
     {
         $this->additionalHeaders = [];
+        $this->requiredClaims = [];
+        $this->requiredClaimsContain = [];
+        $this->requiredClaimsEqual = [];
     }
 
     // Validation Settings
@@ -100,6 +103,11 @@ class JwsDecoder
         $this->requiredClaimsContain = $requiredClaimsContain;
     }
 
+    public function setRequiredAudience(array $audience)
+    {
+        $this->audience = $audience;
+    }
+
     /**
      * @param Jwks $jwks
      */
@@ -107,14 +115,6 @@ class JwsDecoder
     {
         $this->jwks = $jwks;
     }
-
-
-
-
-
-
-
-
 
     /**
      * Whitelist of non-required Headers that might be considered critical by token generator
@@ -196,19 +196,25 @@ class JwsDecoder
                 throw new InvalidClaimException("Claim '$claim' missing");
             }
         }
-        if(!$claimsSet['iss'] == $this->issuer) {
-            throw new InvalidClaimException("Invalid token issuer");
+        if($claimsSet['iss'] != $this->issuer) {
+            throw new InvalidClaimException("Invalid token issuer (expected {$this->issuer}, given {$claimsSet['iss']})");
         }
         if(is_array($claimsSet['aud'])) {
-            if(!in_array($this->clientId, $claimsSet['aud'])) {
-                throw new InvalidClaimException("Client not listed as audience");
+            $this->audience[] = $this->clientId;
+            foreach ($this->audience as $client) {
+                if(!in_array($client, $claimsSet['aud'])) {
+                    throw new InvalidClaimException("Client '$client' not listed as audience");
+                }
             }
         } else if($this->clientId != $claimsSet['aud']) {
-            throw new InvalidClaimException("Client not listed as audience");
+            throw new InvalidClaimException("Client '{$this->clientId}' not listed as audience");
         }
 
         if($claimsSet['exp'] < time()) {
             throw new InvalidClaimException("Token expired");
+        }
+        if($claimsSet['iat'] > time()) {
+            throw new InvalidClaimException("Token looks suspiciously futuristic");
         }
 
         foreach ($this->requiredClaims as $claim) {
