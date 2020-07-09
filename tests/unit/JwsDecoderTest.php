@@ -24,10 +24,12 @@ class JwsDecoderTest extends TestCase
         $keyString = trim(file_get_contents(__DIR__ . "/../mockData/secrets/private-key-rsa2048.pem"));
         $jwk = JwkFactory::loadPem($keyString);
         $jwk->setAlgorithm(Jwa::RS256);
-        $this->jwksPrivate = new Jwks();
-        $this->privateKeyId = $this->jwksPrivate->addJwk($jwk);
+        $this->privateKeyId = $jwk->getThumbprint();
+        $encoder = new JwtEncoder();
+        $encoder->addJwk($jwk);
 
-        $this->encoder = new JwtEncoder($this->jwksPrivate);
+        $this->encoder = new JwtEncoder();
+        $this->encoder->addJwk($jwk);
 
         $keyString = trim(file_get_contents(__DIR__ . "/../mockData/secrets/public-key-rsa2048.pem"));
         $jwk = JwkFactory::loadPem($keyString);

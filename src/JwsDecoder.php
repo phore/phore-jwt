@@ -8,6 +8,7 @@ use Phore\JWT\Exceptions\InvalidClaimException;
 use Phore\JWT\Exceptions\InvalidHeaderException;
 use Phore\JWT\Exceptions\InvalidJwtFormatException;
 use Phore\JWT\Exceptions\InvalidSignatureException;
+use Phore\JWT\JWK\Jwk;
 use Phore\JWT\JWK\Jwks;
 use stdClass;
 
@@ -48,7 +49,7 @@ class JwsDecoder
     /**
      * @var Jwks JWKS Class Object containing one ore more keys used for signature validation
      */
-    private $jwks;
+    private $jwkSet;
 
     private $additionalHeaders;
 
@@ -63,6 +64,7 @@ class JwsDecoder
      */
     public function __construct()
     {
+        $this->jwkSet = new Jwks();
         $this->additionalHeaders = [];
         $this->requiredClaims = [];
         $this->requiredClaimsContain = [];
@@ -109,11 +111,22 @@ class JwsDecoder
     }
 
     /**
-     * @param Jwks $jwks
+     * Set the JWKS with keys that can be used for signature validation. This will overwrite any previously added keys.
+     * @param Jwks $jwkSet
      */
-    public function setJwks(Jwks $jwks): void
+    public function setJwks(Jwks $jwkSet): void
     {
-        $this->jwks = $jwks;
+        $this->jwkSet = $jwkSet;
+    }
+
+    /**
+     * Add a key that can be used for signature validation. Multiple keys are allowed.
+     * @param Jwk $jwk
+     * @return string KeyId ('kid') of the added key.
+     */
+    public function addJwk(Jwk $jwk) : string
+    {
+        return $this->jwkSet->addJwk($jwk);
     }
 
     /**
@@ -175,7 +188,7 @@ class JwsDecoder
     }
 
     private function validateSignature(string $tokenAlg, string $tokenKid, string $b64headerPayload) {
-        $jwk = $this->jwks->getKey($tokenKid);
+        $jwk = $this->jwkSet->getKey($tokenKid);
         switch ($tokenAlg) {
             case Jwa::RS256:
                 $rsaSignatureAlg = OPENSSL_ALGO_SHA256;
