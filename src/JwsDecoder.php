@@ -4,6 +4,7 @@
 namespace Phore\JWT;
 
 use Phore\JWT\Exceptions\InvalidAlgorithmException;
+use Phore\JWT\Exceptions\InvalidClaimException;
 use Phore\JWT\Exceptions\InvalidHeaderException;
 use Phore\JWT\Exceptions\InvalidJwtFormatException;
 use Phore\JWT\Exceptions\InvalidSignatureException;
@@ -142,6 +143,8 @@ class JwsDecoder
         if(!(is_array($claimsSet)))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
 
+        $this->validateClaims($claimsSet);
+
         $jwt = new Jwt($claimsSet);
         foreach ($header as $key => $value) {
             $jwt->setHeader($key, $value);
@@ -185,9 +188,49 @@ class JwsDecoder
     }
 
 
-    private function validatePayload()
+    private function validateClaims(array $claimsSet)
     {
+        $requiredStandardClaims = ["iss", "aud", "exp", "iat", "sub"];
+        foreach ($requiredStandardClaims as $claim) {
+            if (!key_exists($claim, $claimsSet)){
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
+        if(!$claimsSet['iss'] == $this->issuer) {
+            throw new InvalidClaimException("Invalid token issuer");
+        }
+        if(is_array($claimsSet['aud'])) {
+            if(!in_array($this->clientId, $claimsSet['aud'])) {
+                throw new InvalidClaimException("Client not listed as audience");
+            }
+        } else if($this->clientId != $claimsSet['aud']) {
+            throw new InvalidClaimException("Client not listed as audience");
+        }
 
+        if($claimsSet['exp'] < time()) {
+            throw new InvalidClaimException("Token expired");
+        }
+
+        foreach ($this->requiredClaims as $claim) {
+            if (!key_exists($claim, $claimsSet)){
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
+
+        foreach ($this->requiredClaimsContain as $claim => $needle) {
+            if (key_exists($claim, $claimsSet)){
+                $value = $claimsSet[$claim];
+                if(is_array($value)) {
+                    if(!in_array($needle, $value))
+                        throw new InvalidClaimException("Claim '$claim' (array) does not contain string '$needle'");
+                } else
+                if(strpos((string) $value, (string) $needle) === false) {
+                    throw new InvalidClaimException("Claim '$claim':'$value (string) does not contain string '$needle'");
+                }
+            } else {
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
     }
 
 }

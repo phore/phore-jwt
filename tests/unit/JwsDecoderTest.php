@@ -20,7 +20,7 @@ class JwsDecoderTest extends TestCase
         $decoder->setClientId("client");
         $decoder->setJwks($jwks);
         $decoder->setRequiredClaims(['test']);
-        $decoder->setRequiredClaimsContain(['test' => 123]);
+        $decoder->setRequiredClaimsContain(['test' => 12]);
 
         $tokenString = trim(file_get_contents(__DIR__ . "/../mockData/rs256-JWS.jwt"));
         $jwt = $decoder->decode($tokenString);

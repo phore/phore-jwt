@@ -81,4 +81,15 @@ class JwkFactory
         throw new InvalidArgumentException("Invalid or unsupported algorithm.");
     }
 
+    public static function detectFormat(string $keyString) : string
+    {
+        //TODO: auto detect format
+        if (preg_match("/-{5}BEGIN (?:(RSA|EC) )?(PUBLIC|PRIVATE) KEY-{5}/", $keyString, $matches)) {
+            // PEM
+        } elseif (preg_match("/{[\s\S]*['\"]kty['\"]\s*:\s*['\"](EC|RSA|oct)['\"][\s\S]*}/", $keyString, $matches)) {
+            // JKW
+        }
+        return "unknown";
+    }
+
 }

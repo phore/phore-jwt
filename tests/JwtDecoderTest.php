@@ -4,8 +4,8 @@ namespace Phore\Tests;
 
 use Exception;
 use InvalidArgumentException;
-use Phore\ASN\KeyFactory;
 use Phore\JWT\Jwa;
+use Phore\JWT\JWK\JwkFactory;
 use Phore\JWT\JwtDecoder;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
@@ -97,8 +97,8 @@ class JwtDecoderTest extends TestCase
     {
         $token = trim(file_get_contents(__DIR__ . "/mockData/rs256-JWS.jwt"));
         $decoder = new JwtDecoder();
-        $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa2048.pem")));
-        $decoder->setSingleSecret(Jwa::RS256, $secret->exportPem());
+        $key = JwkFactory::loadPem(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa2048.pem")));
+        $decoder->setSingleSecret(Jwa::RS256, $key->getPem());
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals(123, $jwt->getClaim('test', 'does not exist'));
@@ -109,8 +109,8 @@ class JwtDecoderTest extends TestCase
     {
         $token = trim(file_get_contents(__DIR__ . "/mockData/rs512-JWS.jwt"));
         $decoder = new JwtDecoder();
-        $secret = KeyFactory::loadKey(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa4096.pem")));
-        $decoder->setSingleSecret(Jwa::RS512, $secret->exportPem());
+        $key = JwkFactory::loadPem(trim(file_get_contents(__DIR__ . "/mockData/secrets/public-key-rsa4096.pem")));
+        $decoder->setSingleSecret(Jwa::RS512, $key->getPem());
         $jwt = $decoder->decode($token);
         $this->assertEquals('does not exist', $jwt->getClaim('claim123', 'does not exist'));
         $this->assertEquals('val', $jwt->getClaim('key', 'does not exist'));

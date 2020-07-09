@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5701ec4c5fad46dec8f34008787f0757",
+    "content-hash": "e2b0eff630fb448ff1da0cde11fa7a4f",
     "packages": [],
     "packages-dev": [
         {
@@ -215,16 +215,16 @@
         },
         {
             "name": "phore/phore-asn-der",
-            "version": "dev-master",
+            "version": "dev-pure-asn",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phore/phore-asn-der.git",
-                "reference": "353dca7b6bbba950da360017f85ab2fba6035cdb"
+                "reference": "21e19915f9c15f5fdaeaa2d6d66c11dea84b7552"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phore/phore-asn-der/zipball/353dca7b6bbba950da360017f85ab2fba6035cdb",
-                "reference": "353dca7b6bbba950da360017f85ab2fba6035cdb",
+                "url": "https://api.github.com/repos/phore/phore-asn-der/zipball/21e19915f9c15f5fdaeaa2d6d66c11dea84b7552",
+                "reference": "21e19915f9c15f5fdaeaa2d6d66c11dea84b7552",
                 "shasum": ""
             },
             "require": {
@@ -260,10 +260,10 @@
             "description": "Phore ASN.1-DER library",
             "homepage": "https://infracamp.org/project/phore",
             "support": {
-                "source": "https://github.com/phore/phore-asn-der/tree/master",
+                "source": "https://github.com/phore/phore-asn-der/tree/pure-asn",
                 "issues": "https://github.com/phore/phore-asn-der/issues"
             },
-            "time": "2020-06-18T16:00:21+00:00"
+            "time": "2020-07-09T12:21:04+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -320,23 +320,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "7c87da1725d657c73376ce8c37973abe006db7c0"
+                "reference": "eb3320ef010709f339f118dde1645e197c4961ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/7c87da1725d657c73376ce8c37973abe006db7c0",
-                "reference": "7c87da1725d657c73376ce8c37973abe006db7c0",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/eb3320ef010709f339f118dde1645e197c4961ec",
+                "reference": "eb3320ef010709f339f118dde1645e197c4961ec",
                 "shasum": ""
             },
             "require": {
                 "ext-filter": "*",
                 "php": "^7.2 || ^8.0",
-                "phpdocumentor/reflection-common": "^2.0",
-                "phpdocumentor/type-resolver": "^1.0",
-                "webmozart/assert": "^1"
+                "phpdocumentor/reflection-common": "^2.2",
+                "phpdocumentor/type-resolver": "^1.3",
+                "webmozart/assert": "^1.9.1"
             },
             "require-dev": {
-                "mockery/mockery": "1.3.*"
+                "mockery/mockery": "~1.3.2"
             },
             "type": "library",
             "extra": {
@@ -364,7 +364,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-07-07T14:44:20+00:00"
+            "time": "2020-07-09T12:42:26+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -418,12 +418,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "8ff0384cd5d87e038297e79d85c99e4b2dcf0e61"
+                "reference": "fa7f91090a63296a3c9af65e124384e19dad7e29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/8ff0384cd5d87e038297e79d85c99e4b2dcf0e61",
-                "reference": "8ff0384cd5d87e038297e79d85c99e4b2dcf0e61",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/fa7f91090a63296a3c9af65e124384e19dad7e29",
+                "reference": "fa7f91090a63296a3c9af65e124384e19dad7e29",
                 "shasum": ""
             },
             "require": {
@@ -473,7 +473,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-07-07T16:07:38+00:00"
+            "time": "2020-07-09T10:28:49+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1529,20 +1529,20 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.9.0",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "9dc4f203e36f2b486149058bade43c851dd97451"
+                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/9dc4f203e36f2b486149058bade43c851dd97451",
-                "reference": "9dc4f203e36f2b486149058bade43c851dd97451",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3.3 || ^7.0",
+                "php": "^5.3.3 || ^7.0 || ^8.0",
                 "symfony/polyfill-ctype": "^1.8"
             },
             "conflict": {
@@ -1574,12 +1574,14 @@
                 "check",
                 "validate"
             ],
-            "time": "2020-06-16T10:16:42+00:00"
+            "time": "2020-07-08T17:02:28+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "phore/phore-asn-der": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
