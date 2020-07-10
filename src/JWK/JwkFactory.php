@@ -14,7 +14,7 @@ class JwkFactory
      * @param array $jsonInput
      * @return Jwk
      */
-    public function buildJwk(array $jsonInput) : Jwk
+    public function buildJwks(array $jsonInput) : Jwks
     {
 
     }

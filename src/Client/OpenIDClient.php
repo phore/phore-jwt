@@ -95,7 +95,7 @@ class OpenIDClient
             return phore_http_request($url)->send()->getBodyJson();
         });
         $factory = new JwkFactory();
-        $factory->buildJwk($jwkData)
+        $factory->buildJwk($jwkData);
     }
 
 
