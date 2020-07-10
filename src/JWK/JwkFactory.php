@@ -8,6 +8,17 @@ use InvalidArgumentException;
 
 class JwkFactory
 {
+    /**
+     * Generate a JWK from json array
+     *
+     * @param array $jsonInput
+     * @return Jwk
+     */
+    public function buildJwk(array $jsonInput) : Jwk
+    {
+
+    }
+
     public function loadJwkString(string $json) : Jwk
     {
         //TODO: create a jwk from a jwk json string
