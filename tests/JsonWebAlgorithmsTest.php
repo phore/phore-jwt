@@ -1,5 +1,6 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\Jwa;
 use PHPUnit\Framework\TestCase;

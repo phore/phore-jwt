@@ -32,9 +32,9 @@ class JwtEncoder
      * JwtEncoder constructor.
      * @param Jwks|null $jwkSet
      */
-    public function __construct(?Jwks $jwkSet)
+    public function __construct()
     {
-        $this->jwkSet = $jwkSet ?? new Jwks();;
+        $this->jwkSet = new Jwks();
     }
 
     public function setJwks(Jwks $jwkSet)
@@ -60,7 +60,7 @@ class JwtEncoder
     {
         $key = $this->jwkSet->getKey($kid);
         if(empty($key)){
-            throw new InvalidArgumentException("Key '$kid' not found.");
+            throw new InvalidArgumentException("Cannot encode token. Key '$kid' not found.");
         }
         $this->secret = $key->getPem();
         $this->alg = $key->getAlgorithm();

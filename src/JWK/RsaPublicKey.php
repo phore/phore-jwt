@@ -4,6 +4,9 @@
 namespace Phore\JWT\JWK;
 
 
+use Phore\ASN\DerPacker;
+use Phore\ASN\PemFormatHelper;
+
 class RsaPublicKey extends Jwk
 {
     private $modulus;
@@ -30,7 +33,22 @@ class RsaPublicKey extends Jwk
 
     private function pemEncodeKey() : string
     {
-        return "";
+        $oid = "300d06092a864886f70d0101010500";
+        $derMod = DerPacker::packUnsignedInt(bin2hex($this->modulus));
+        $derExp = DerPacker::packUnsignedInt(bin2hex($this->exponent));
+        $derModExp = DerPacker::packSequence($derMod, $derExp);
+        $derPubKeyBitString = DerPacker::packBitString($derModExp, "00");
+        $derEncodedKey = DerPacker::packSequence($oid, $derPubKeyBitString);
+
+        $label = 'PUBLIC KEY';
+        return PemFormatHelper::pemEncodeKey($derEncodedKey, $label);
+
+//        $header = "-----BEGIN {$label}-----\n";
+//        $footer = "-----END {$label}-----\n";
+//        $base64Key = base64_encode(hex2bin($derEncodedKey));
+//        $data = chunk_split($base64Key,64, "\n");
+//        return trim($header . $data . $footer);
+
     }
 
     protected function getKeyComponentArray(): array

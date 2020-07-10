@@ -1,5 +1,7 @@
 <?php
 
+namespace Phore\Tests;
+
 use Phore\JWT\JWK\RsaPrivateKey;
 use PHPUnit\Framework\TestCase;
 

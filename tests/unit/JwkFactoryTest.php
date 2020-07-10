@@ -1,6 +1,8 @@
 <?php
 
+namespace Phore\Tests;
 
+use InvalidArgumentException;
 use Phore\JWT\JWK\JwkFactory;
 use PHPUnit\Framework\TestCase;
 

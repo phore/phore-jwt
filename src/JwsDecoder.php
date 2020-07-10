@@ -4,9 +4,11 @@
 namespace Phore\JWT;
 
 use Phore\JWT\Exceptions\InvalidAlgorithmException;
+use Phore\JWT\Exceptions\InvalidClaimException;
 use Phore\JWT\Exceptions\InvalidHeaderException;
 use Phore\JWT\Exceptions\InvalidJwtFormatException;
 use Phore\JWT\Exceptions\InvalidSignatureException;
+use Phore\JWT\JWK\Jwk;
 use Phore\JWT\JWK\Jwks;
 use stdClass;
 
@@ -28,7 +30,7 @@ class JwsDecoder
      */
     private $clientId;
     /**
-     * @var array ClientIds that must present int the 'aud' claim (in addition to the clientIc specified above)
+     * @var array ClientIds that must present int the 'aud' claim (in addition to the clientId specified above)
      */
     private $audience;
     /**
@@ -47,7 +49,7 @@ class JwsDecoder
     /**
      * @var Jwks JWKS Class Object containing one ore more keys used for signature validation
      */
-    private $jwks;
+    private $jwkSet;
 
     private $additionalHeaders;
 
@@ -62,7 +64,11 @@ class JwsDecoder
      */
     public function __construct()
     {
+        $this->jwkSet = new Jwks();
         $this->additionalHeaders = [];
+        $this->requiredClaims = [];
+        $this->requiredClaimsContain = [];
+        $this->requiredClaimsEqual = [];
     }
 
     // Validation Settings
@@ -99,21 +105,29 @@ class JwsDecoder
         $this->requiredClaimsContain = $requiredClaimsContain;
     }
 
-    /**
-     * @param Jwks $jwks
-     */
-    public function setJwks(Jwks $jwks): void
+    public function setRequiredAudience(array $audience)
     {
-        $this->jwks = $jwks;
+        $this->audience = $audience;
     }
 
+    /**
+     * Set the JWKS with keys that can be used for signature validation. This will overwrite any previously added keys.
+     * @param Jwks $jwkSet
+     */
+    public function setJwks(Jwks $jwkSet): void
+    {
+        $this->jwkSet = $jwkSet;
+    }
 
-
-
-
-
-
-
+    /**
+     * Add a key that can be used for signature validation. Multiple keys are allowed.
+     * @param Jwk $jwk
+     * @return string KeyId ('kid') of the added key.
+     */
+    public function addJwk(Jwk $jwk) : string
+    {
+        return $this->jwkSet->addJwk($jwk);
+    }
 
     /**
      * Whitelist of non-required Headers that might be considered critical by token generator
@@ -141,6 +155,8 @@ class JwsDecoder
         $claimsSet = json_decode($this->payload, true);
         if(!(is_array($claimsSet)))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
+
+        $this->validateClaims($claimsSet);
 
         $jwt = new Jwt($claimsSet);
         foreach ($header as $key => $value) {
@@ -172,7 +188,7 @@ class JwsDecoder
     }
 
     private function validateSignature(string $tokenAlg, string $tokenKid, string $b64headerPayload) {
-        $jwk = $this->jwks->getKey($tokenKid);
+        $jwk = $this->jwkSet->getKey($tokenKid);
         switch ($tokenAlg) {
             case Jwa::RS256:
                 $rsaSignatureAlg = OPENSSL_ALGO_SHA256;
@@ -185,9 +201,55 @@ class JwsDecoder
     }
 
 
-    private function validatePayload()
+    private function validateClaims(array $claimsSet)
     {
+        $requiredStandardClaims = ["iss", "aud", "exp", "iat", "sub"];
+        foreach ($requiredStandardClaims as $claim) {
+            if (!key_exists($claim, $claimsSet)){
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
+        if($claimsSet['iss'] != $this->issuer) {
+            throw new InvalidClaimException("Invalid token issuer (expected {$this->issuer}, given {$claimsSet['iss']})");
+        }
+        if(is_array($claimsSet['aud'])) {
+            $this->audience[] = $this->clientId;
+            foreach ($this->audience as $client) {
+                if(!in_array($client, $claimsSet['aud'])) {
+                    throw new InvalidClaimException("Client '$client' not listed as audience");
+                }
+            }
+        } else if($this->clientId != $claimsSet['aud']) {
+            throw new InvalidClaimException("Client '{$this->clientId}' not listed as audience");
+        }
 
+        if($claimsSet['exp'] < time()) {
+            throw new InvalidClaimException("Token expired");
+        }
+        if($claimsSet['iat'] > time()) {
+            throw new InvalidClaimException("Token looks suspiciously futuristic");
+        }
+
+        foreach ($this->requiredClaims as $claim) {
+            if (!key_exists($claim, $claimsSet)){
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
+
+        foreach ($this->requiredClaimsContain as $claim => $needle) {
+            if (key_exists($claim, $claimsSet)){
+                $value = $claimsSet[$claim];
+                if(is_array($value)) {
+                    if(!in_array($needle, $value))
+                        throw new InvalidClaimException("Claim '$claim' (array) does not contain string '$needle'");
+                } else
+                if(strpos((string) $value, (string) $needle) === false) {
+                    throw new InvalidClaimException("Claim '$claim':'$value (string) does not contain string '$needle'");
+                }
+            } else {
+                throw new InvalidClaimException("Claim '$claim' missing");
+            }
+        }
     }
 
 }

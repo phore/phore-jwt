@@ -1,5 +1,6 @@
 <?php
 
+namespace Phore\Tests;
 
 use Phore\JWT\JWK\SymmetricKey;
 use PHPUnit\Framework\TestCase;

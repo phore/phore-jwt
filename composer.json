@@ -31,9 +31,12 @@
       "src/functions.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": { "Phore\\Tests\\": "tests/" }
+  },
   "minimum-stability": "dev",
   "require-dev": {
     "phpunit/phpunit": "*",
-    "phore/phore-asn-der": "*"
+    "phore/phore-asn-der": "dev-pure-asn"
   }
 }
