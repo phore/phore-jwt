@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2b0eff630fb448ff1da0cde11fa7a4f",
+    "content-hash": "5701ec4c5fad46dec8f34008787f0757",
     "packages": [],
     "packages-dev": [
         {
@@ -215,16 +215,16 @@
         },
         {
             "name": "phore/phore-asn-der",
-            "version": "dev-pure-asn",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phore/phore-asn-der.git",
-                "reference": "21e19915f9c15f5fdaeaa2d6d66c11dea84b7552"
+                "reference": "7617ec4c756bf737341fef582dfdb104656672cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phore/phore-asn-der/zipball/21e19915f9c15f5fdaeaa2d6d66c11dea84b7552",
-                "reference": "21e19915f9c15f5fdaeaa2d6d66c11dea84b7552",
+                "url": "https://api.github.com/repos/phore/phore-asn-der/zipball/7617ec4c756bf737341fef582dfdb104656672cd",
+                "reference": "7617ec4c756bf737341fef582dfdb104656672cd",
                 "shasum": ""
             },
             "require": {
@@ -260,10 +260,10 @@
             "description": "Phore ASN.1-DER library",
             "homepage": "https://infracamp.org/project/phore",
             "support": {
-                "source": "https://github.com/phore/phore-asn-der/tree/pure-asn",
+                "source": "https://github.com/phore/phore-asn-der/tree/master",
                 "issues": "https://github.com/phore/phore-asn-der/issues"
             },
-            "time": "2020-07-09T12:21:04+00:00"
+            "time": "2020-07-10T22:47:52+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1579,9 +1579,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "phore/phore-asn-der": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

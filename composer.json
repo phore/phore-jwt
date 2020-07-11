@@ -34,6 +34,6 @@
   "minimum-stability": "dev",
   "require-dev": {
     "phpunit/phpunit": "*",
-    "phore/phore-asn-der": "dev-pure-asn"
+    "phore/phore-asn-der": "*"
   }
 }

@@ -1,0 +1,20 @@
+<phpunit bootstrap="/opt/vendor/autoload.php">
+    <testsuites>
+        <testsuite name="Unit tests">
+            <directory>tests/unit</directory>
+        </testsuite>
+        <testsuite name="Integration tests">
+            <directory>tests/integration</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html" target="/opt/report" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+        <log type="testdox-text" target="php://stdout"/>
+    </logging>
+</phpunit>
