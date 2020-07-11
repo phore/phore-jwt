@@ -16,7 +16,6 @@ class OpenIdAuthFlowTest extends TestCase
 
     public function testAuthFlow()
     {
-        $
     }
 
 }
