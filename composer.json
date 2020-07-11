@@ -19,7 +19,8 @@
     "ext-openssl": "*",
     "phore/cache": "dev-master",
     "phore/http-client": "dev-master",
-    "phore/objectstore": "dev-master"
+    "phore/objectstore": "dev-master",
+    "psr/log": "dev-master"
   },
   "suggest": {
   },

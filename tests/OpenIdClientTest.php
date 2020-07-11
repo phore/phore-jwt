@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class OpenIdClientTest extends TestCase
 {
 
-
+/*
     public function testGetClientToken()
     {
         $factory = new OpenIDClientFactory();
@@ -23,10 +23,7 @@ class OpenIdClientTest extends TestCase
         $client->setClientId("clientId", "clientSecret");
 
         $token = $client->getClientToken();
-
-
     }
-
 
     public function testGetValidatedToken()
     {
@@ -35,8 +32,8 @@ class OpenIdClientTest extends TestCase
         $client->setClientId("clientId", "clientSecret");
 
         $token = $client->getValidatedToken();
-
-
     }
+
+*/
 
 }
