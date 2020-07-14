@@ -16,24 +16,24 @@ class OpenIdClientTest extends TestCase
 {
 
 
-    public function testGetClientToken()
-    {
-        $factory = new OpenIDClientFactory();
-        $client = $factory->getOpenIdClient("http://localhost");
-        $client->setClientId("clientId", "clientSecret");
+//    public function testGetClientToken()
+//    {
+//        $factory = new OpenIDClientFactory();
+//        $client = $factory->getOpenIdClient("http://localhost");
+//        $client->setClientId("clientId", "clientSecret");
+//
+//        $token = $client->getClientToken();
+//    }
 
-        $token = $client->getClientToken();
-    }
 
-
-    public function testGetValidatedToken()
-    {
-        $factory = new OpenIDClientFactory();
-        $client = $factory->getOpenIdClient("http://localhost");
-        $client->setClientId("clientId", "clientSecret");
-
-        $token = $client->getValidatedToken();
-    }
+//    public function testGetValidatedToken()
+//    {
+//        $factory = new OpenIDClientFactory();
+//        $client = $factory->getOpenIdClient("http://localhost");
+//        $client->setClientId("clientId", "clientSecret");
+//
+//        $token = $client->getValidatedToken();
+//    }
 
 
 }

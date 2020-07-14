@@ -8,11 +8,7 @@
     { "name": "Michael Schaar"}
   ],
   "repositories": [
-    {
-        "type": "vcs",
-        "url":  "git@github.com:phore/phore-asn-der.git"
-    }
-],
+  ],
   "require": {
     "php": ">=7.2",
     "ext-json": "*",
@@ -20,6 +16,7 @@
     "phore/cache": "dev-master",
     "phore/http-client": "dev-master",
     "phore/objectstore": "dev-master",
+    "phore/asn-der" : "dev-master",
     "psr/log": "dev-master"
   },
   "suggest": {
@@ -37,7 +34,6 @@
   },
   "minimum-stability": "dev",
   "require-dev": {
-    "phpunit/phpunit": "*",
-    "phore/phore-asn-der": "*"
+    "phpunit/phpunit": "*"
   }
 }
