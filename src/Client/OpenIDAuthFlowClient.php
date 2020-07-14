@@ -12,8 +12,6 @@ namespace Phore\JWT\Client;
 class OpenIDAuthFlowClient extends OpenIDClient
 {
 
-
-
     public function getProfileLink()
     {
 

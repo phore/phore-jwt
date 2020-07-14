@@ -114,7 +114,7 @@ class OpenIDClient
         $item = $this->cacheItemPool->getItem("openid_{$url}_{$this->clientId}_" . implode("/", $requestScopes));
 
         $token = $item->load(function () {
-            // do the call here
+            // do the call to token endpoint to get token
         });
 
         return new Jwt();
@@ -167,6 +167,8 @@ class OpenIDClient
 
         $decoder->setJwks($this->getJwks());
         $decoder->setClientId($this->clientId);
+        $decoder->setRequiredClaimsContain();
+        $decoder->setRequiredClaims();
 
         $jwt = $decoder->decode($token);
         return $jwt;

@@ -35,7 +35,7 @@ class OpenIDClientFactory
 
 
 
-    protected function getDiscoveryConfig()
+    protected function getDiscoveryConfig(string $openIdHost, string $discoveryPath = "/.well-known/openid-configuration.json")
     {
         $cache = $this->cacheItemPool->getItem("openid_{$openIdHost}_{$discoveryPath}");
 
@@ -54,7 +54,7 @@ class OpenIDClientFactory
      */
     public function getOpenIdClient(string $openIdHost, string $discoveryPath="/.well-known/openid-configuration.json") : OpenIDClient
     {
-        $config = $this->getDiscoveryConfig();
+        $config = $this->getDiscoveryConfig($openIdHost, $discoveryPath);
         return new OpenIDClient($config, $this->cacheItemPool);
     }
 

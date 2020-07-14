@@ -42,9 +42,9 @@ class JwtEncoder
         $this->jwkSet = $jwkSet;
     }
 
-    public function addJwk(Jwk $jwk)
+    public function addJwk(Jwk $jwk) : string
     {
-        $this->jwkSet->addJwk($jwk);
+        return $this->jwkSet->addJwk($jwk);
     }
 
     /**
