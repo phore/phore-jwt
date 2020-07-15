@@ -29,7 +29,7 @@ class SymmetricKey extends Jwk
 
     public function getPem(): string
     {
-        // TODO: Implement getPem() method.
+        // TODO: Implement getPem() method, if there is any.. https://www.ietf.org/rfc/rfc1423.txt might help
         return "";
     }
 
@@ -42,5 +42,7 @@ class SymmetricKey extends Jwk
     {
         $thumbprint['k'] = base64urlEncode($this->keyValue);
         $thumbprint['kty'] = $this->keyType;
+
+        return $thumbprint;
     }
 }
