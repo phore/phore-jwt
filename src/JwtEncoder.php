@@ -11,21 +11,19 @@ use Phore\JWT\JWK\Jwks;
 class JwtEncoder
 {
     /**
-     * Signing or encryption algorithm as specified in https://tools.ietf.org/html/rfc7518#section-3
-     * @var string
-     */
-    private $alg;
-    /**
      * Callback function that performs the signing operation and returns the unencoded signature
      * @var callable
      */
     private $signatureCallback;
+
     /**
-     * The secret used to perform the signing operation
-     * @var string
+     * @var string $secret
      */
     private $secret;
 
+    /**
+     * @var Jwks $jwkSet
+     */
     private $jwkSet;
 
     /**
@@ -49,8 +47,8 @@ class JwtEncoder
 
     /**
      * Signs and encodes the JWT object into the JWS / JWE Compact Serialization. Requires a signing algorithm and
-     * secret set through JwtEncoder->setSecret($alg, $secret) or through the provided jwks referenced by the kid.
-     * If an algorithm was specified in the JWT's 'alg' header, it will be overwritten by the alg provided here.
+     * secret set by adding a jwk key using addJwk($key). If an algorithm was specified in the JWT's 'alg' header,
+     * it will be overwritten by the alg of the key.
      *
      * @param Jwt $jwt
      * @param string $kid References a key in the jwks
@@ -62,40 +60,13 @@ class JwtEncoder
         if(empty($key)){
             throw new InvalidArgumentException("Cannot encode token. Key '$kid' not found.");
         }
-        $this->secret = $key->getPem();
-        $this->alg = $key->getAlgorithm();
-        $jwt->setHeader('alg', $this->alg);
+        $alg = $key->getAlgorithm();
+        $jwt->setHeader('alg', $alg);
         $jwt->setHeader('kid', $kid);
-        switch ($this->alg) {
-            case Jwa::RS256:
-                $this->signatureCallback = function ($b64HeaderPayload) {
-                    if(!openssl_sign($b64HeaderPayload, $signature, $this->secret, OPENSSL_ALGO_SHA256))
-                        throw new InvalidArgumentException("Secret must be a valid PEM-formatted RSA Private Key");
-                    return $signature;
-                };
-                break;
-            default:
-                throw new InvalidArgumentException("JWT-encoding requires a secret and algorithm to be set.");
-        }
-        $b64Header = $this->base64urlEncode($jwt->serializeHeader());
-        $b64Payload = $this->base64urlEncode($jwt->serializePayload());
-        return $this->sign($b64Header . "." . $b64Payload);
-    }
-
-    /**
-     * Set the secret and algorithm used to sign the JWS or encrypt the JWE token
-     *
-     * @param string $alg Must be one of the parameters specified in https://tools.ietf.org/html/rfc7518#section-3
-     * @param string $secret A valid secret in accordance with the chosen algorithm
-     *
-     * @throws InvalidArgumentException if any of the supplied parameters are invalid
-     */
-    public function setSecret(string $alg, string $secret)
-    {
         switch ($alg) {
             case 'none':
-                if(!empty($secret))
-                    throw new InvalidArgumentException("Algorithm 'none' requires an empty secret!");
+                // TODO: find a save way to disable alg none
+                // throw new InvalidArgumentException("Algorithm 'none' requires an empty secret!");
                 $this->signatureCallback = function ($b64HeaderPayload) {
                     return "";
                 };
@@ -105,6 +76,7 @@ class JwtEncoder
                  * TODO: Using a PKCS key for symmetric algorithms can be dangerous. This could be prevented here by
                  *  validating the secret
                  */
+                $this->secret = $key->getArray()['k'];
                 $this->signatureCallback = function ($b64HeaderPayload) {
                     return hash_hmac("sha256", $b64HeaderPayload, $this->secret, true);
                 };
@@ -114,11 +86,13 @@ class JwtEncoder
                  * TODO: Using a PKCS key for symmetric algorithms can be dangerous. This could be prevented here by
                  *  validating the secret
                  */
-            $this->signatureCallback = function ($b64HeaderPayload) {
+                $this->secret = $key->getArray()['k'];
+                $this->signatureCallback = function ($b64HeaderPayload) {
                     return hash_hmac("sha512", $b64HeaderPayload, $this->secret, true);
                 };
                 break;
-            case "RS256":
+            case Jwa::RS256:
+                $this->secret = $key->getPem();
                 $this->signatureCallback = function ($b64HeaderPayload) {
                     if(!openssl_sign($b64HeaderPayload, $signature, $this->secret, OPENSSL_ALGO_SHA256))
                         throw new InvalidArgumentException("Secret must be a valid PEM-formatted RSA Private Key");
@@ -126,6 +100,7 @@ class JwtEncoder
                 };
                 break;
             case "RS512":
+                $this->secret = $key->getPem();
                 $this->signatureCallback = function ($b64HeaderPayload) {
                     if(!openssl_sign($b64HeaderPayload, $signature, $this->secret, OPENSSL_ALGO_SHA512))
                         throw new InvalidArgumentException("Secret must be a valid PEM-formatted RSA Private Key");
@@ -139,14 +114,14 @@ class JwtEncoder
             case "PS256":
             case "PS384":
             case "PS512":
+                throw new InvalidArgumentException("Algorithm '$alg' not supported.");
             default:
-                throw new InvalidArgumentException("Algorithm '$alg' unknown or not supported.");
+                throw new InvalidArgumentException("JWT-encoding requires a secret and algorithm to be set.");
         }
-
-        $this->alg = $alg;
-        $this->secret = $secret;
+        $b64Header = $this->base64urlEncode($jwt->serializeHeader());
+        $b64Payload = $this->base64urlEncode($jwt->serializePayload());
+        return $this->sign($b64Header . "." . $b64Payload);
     }
-
 
     private function sign(string $b64HeaderPayload) : string
     {

@@ -1,3 +1,0 @@
-<?php
-
-$token = new Jwt();
