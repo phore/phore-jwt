@@ -35,11 +35,12 @@ class SymmetricKey extends Jwk
 
     protected function getKeyComponentArray(): array
     {
-        // TODO: Implement getKeyComponentArray() method.
+        return ['k' => base64urlEncode($this->keyValue)];
     }
 
     protected function getThumbprintArray(): array
     {
-        // TODO: Implement getThumbprintArray() method.
+        $thumbprint['k'] = base64urlEncode($this->keyValue);
+        $thumbprint['kty'] = $this->keyType;
     }
 }
