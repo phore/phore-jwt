@@ -17,3 +17,7 @@ Not implemented:
 Test keys created with http://keytool.online/
 
 Token creation and parsing validated using https://jwt.io/ 
+
+Currently supported JWS signature algorithms:
+HS256, HS512, RS256, RS512
+
