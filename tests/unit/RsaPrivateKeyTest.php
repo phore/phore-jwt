@@ -48,4 +48,21 @@ class RsaPrivateKeyTest extends TestCase
         $this->assertEquals('QXDVYlIDF6DxyTivEovW7lQ9D0h0JgFfcyl3KyZBtDo', $thumbprint);
 
     }
+
+    public function testGetPublicKey()
+    {
+        $key = new RsaPrivateKey(
+            'n',
+            'e',
+            'd',
+            'p',
+            'q',
+            'dp',
+            'dq',
+            'qi'
+        );
+
+        $publicKey = $key->getPublicKey();
+        echo $publicKey;
+    }
 }
