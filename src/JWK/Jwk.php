@@ -106,6 +106,22 @@ abstract class Jwk
     }
 
     /**
+     * @return mixed
+     */
+    public function getPublicKeyUse()
+    {
+        return $this->publicKeyUse;
+    }
+
+    /**
+     * @param mixed $publicKeyUse
+     */
+    public function setPublicKeyUse($publicKeyUse): void
+    {
+        $this->publicKeyUse = $publicKeyUse;
+    }
+
+    /**
      * @param mixed $pemEncodedString
      */
     public function setPemEncodedString($pemEncodedString): void

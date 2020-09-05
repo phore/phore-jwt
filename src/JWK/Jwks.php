@@ -3,7 +3,9 @@
 
 namespace Phore\JWT\JWK;
 
-class Jwks
+use JsonSerializable;
+
+class Jwks implements JsonSerializable
 {
     /**
      * @var Jwk[]
@@ -42,4 +44,14 @@ class Jwks
         return $this->keys[$kid] ?? null;
     }
 
+    public function jsonSerialize()
+    {
+        $jwks['keys'] = [];
+
+        foreach ($this->keys as $kid => $jwk) {
+            $jwks['keys'] = $jwk->getArray();
+        }
+
+        return $jwks;
+    }
 }

@@ -15,7 +15,6 @@ class Test extends TestCase
     {
         $rsaPrivateKey = JwkFactory::loadPem(trim(file_get_contents(__DIR__ . "/../mockData/secrets/private-key-rsa2048.pem")));
         $rsaPrivateKey->setAlgorithm(Jwa::RS256);
-//        print_r($rsaPrivateKey);
         $jwks = new Jwks();
         $kidPrivate = $jwks->addJwk($rsaPrivateKey);
         $encoder = new JwtEncoder();

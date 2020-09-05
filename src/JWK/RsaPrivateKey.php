@@ -55,7 +55,9 @@ class RsaPrivateKey extends Jwk
 
     public function getPublicKey(): RsaPublicKey
     {
-        return new RsaPublicKey($this->modulus, $this->exponent);
+        $pubKey = new RsaPublicKey($this->modulus, $this->exponent);
+        $pubKey->setAlgorithm($this->algorithm);
+        return $pubKey;
     }
 
     private function pemEncodeKey() : string

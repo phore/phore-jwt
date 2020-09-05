@@ -23,6 +23,7 @@ class RsaPublicKey extends Jwk
         parent::__construct($keyType);
         $this->modulus = $modulus;
         $this->exponent = $exponent;
+        $this->publicKeyUse = 'sig';
     }
 
     public function getPem(): string
