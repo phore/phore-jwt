@@ -49,7 +49,7 @@ class Jwks implements JsonSerializable
         $jwks['keys'] = [];
 
         foreach ($this->keys as $kid => $jwk) {
-            $jwks['keys'] = [$jwk->getArray()];
+            $jwks['keys'][] = $jwk->getArray();
         }
 
         return $jwks;
