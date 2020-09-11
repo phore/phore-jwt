@@ -195,6 +195,11 @@ class JwsDecoder
                 $pub = openssl_pkey_get_public($jwk->getPem());
                 $verify = openssl_verify($b64headerPayload, $this->signature, $pub, $rsaSignatureAlg);
                 return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
+            case Jwa::RS512:
+                $rsaSignatureAlg = OPENSSL_ALGO_SHA512;
+                $pub = openssl_pkey_get_public($jwk->getPem());
+                $verify = openssl_verify($b64headerPayload, $this->signature, $pub, $rsaSignatureAlg);
+                return filter_var($verify, FILTER_VALIDATE_BOOLEAN);
             default:
                 throw new InvalidSignatureException("Signature verification failed.");
         }
