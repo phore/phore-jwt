@@ -31,9 +31,9 @@ class JwsDecoder
     private $clientId;
 
     /**
-     * @var string $clientSecret Secret of the client used for symmetric algorithms HS256 and HS512
+     * @var string $clientSecretKeyId Secret of the client used for symmetric algorithms HS256 and HS512
      */
-    private $clientSecret;
+    private $clientSecretKeyId;
     /**
      * @var array ClientIds that must present int the 'aud' claim (in addition to the clientId specified above)
      */
@@ -95,11 +95,11 @@ class JwsDecoder
     }
 
     /**
-     * @param string $clientSecret
+     * @param string $clientSecretKeyId
      */
-    public function setClientSecret(string $clientSecret): void
+    public function setClientSecretKeyId(string $clientSecretKeyId): void
     {
-        $this->clientSecret = $clientSecret;
+        $this->clientSecretKeyId = $clientSecretKeyId;
     }
 
     /**
@@ -158,15 +158,16 @@ class JwsDecoder
             throw new InvalidJwtFormatException("JWS needs exactly three base64url-encoded components delimited by two period characters.");
         $this->header = base64urlDecode($jwsComponents[1]);
         $this->payload = base64urlDecode($jwsComponents[2]);
+        $this->signature = $jwsComponents[3];
         $header = json_decode($this->header);
         if(!($header instanceof stdClass))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
         $this->validateHeader($header);
         if($this->nested === true)
             throw new InvalidJwtFormatException("Nested JWTs are currently not supported");
-        if(empty($header->kid) && empty($this->clientSecret))
+        if(empty($header->kid) && empty($this->clientSecretKeyId))
             throw new InvalidSignatureException("No keys provided to validate signature.");
-        $this->validateSignature($header->alg, $header->kid ?? $this->clientSecret, $jwsComponents[0].$jwsComponents[1]);
+        $this->validateSignature($header->alg, $header->kid ?? $this->clientSecretKeyId, $jwsComponents[1].$jwsComponents[2]);
         $claimsSet = json_decode($this->payload, true);
         if(!(is_array($claimsSet)))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
