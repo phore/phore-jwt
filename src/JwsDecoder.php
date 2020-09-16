@@ -190,6 +190,10 @@ class JwsDecoder
     private function validateSignature(string $tokenAlg, string $tokenKid, string $b64headerPayload) {
         $jwk = $this->jwkSet->getKey($tokenKid);
         switch ($tokenAlg) {
+            case Jwa::HS256:
+                return hash_equals($this->signature, hash_hmac("sha256", $b64headerPayload, $jwk->getArray()['k'], true));
+            case Jwa::HS512:
+                return hash_equals($this->signature, hash_hmac("sha512", $b64headerPayload, $jwk->getArray()['k'], true));
             case Jwa::RS256:
                 $rsaSignatureAlg = OPENSSL_ALGO_SHA256;
                 $pub = openssl_pkey_get_public($jwk->getPem());
