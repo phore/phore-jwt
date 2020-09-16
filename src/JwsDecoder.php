@@ -29,6 +29,11 @@ class JwsDecoder
      * @var string ClientId that is registered at issuer
      */
     private $clientId;
+
+    /**
+     * @var string $clientSecret Secret of the client used for symmetric algorithms HS256 and HS512
+     */
+    private $clientSecret;
     /**
      * @var array ClientIds that must present int the 'aud' claim (in addition to the clientId specified above)
      */
@@ -87,6 +92,14 @@ class JwsDecoder
     public function setClientId(string $clientId): void
     {
         $this->clientId = $clientId;
+    }
+
+    /**
+     * @param string $clientSecret
+     */
+    public function setClientSecret(string $clientSecret): void
+    {
+        $this->clientSecret = $clientSecret;
     }
 
     /**
@@ -151,7 +164,9 @@ class JwsDecoder
         $this->validateHeader($header);
         if($this->nested === true)
             throw new InvalidJwtFormatException("Nested JWTs are currently not supported");
-        $this->validateSignature($header->alg, $header->kid, $jwsComponents[0].$jwsComponents[1]);
+        if(empty($header->kid) && empty($this->clientSecret))
+            throw new InvalidSignatureException("No keys provided to validate signature.");
+        $this->validateSignature($header->alg, $header->kid ?? $this->clientSecret, $jwsComponents[0].$jwsComponents[1]);
         $claimsSet = json_decode($this->payload, true);
         if(!(is_array($claimsSet)))
             throw new InvalidJwtFormatException("JWS contains invalid Json.");
@@ -187,7 +202,7 @@ class JwsDecoder
         }
     }
 
-    private function validateSignature(string $tokenAlg, string $tokenKid, string $b64headerPayload) {
+    private function validateSignature(string $tokenAlg, string $tokenKid = '', string $b64headerPayload = '') {
         $jwk = $this->jwkSet->getKey($tokenKid);
         switch ($tokenAlg) {
             case Jwa::HS256:
